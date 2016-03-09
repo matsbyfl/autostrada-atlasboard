@@ -94,12 +94,30 @@ module.exports = {
 
       console.log("fuck yeah")
 
-      _.map(activities, function (activity) {
-        return
+      var groupped = _.groupBy(activities, 'strava_activity.athlete.id')
 
+      var result = [];
+
+      // Filter by week
+
+      Object.keys(groupped).forEach(function(athlete) {
+        result.push({
+          athlete: groupped[athlete][0].strava_activity.athlete.firstname + ' ' + groupped[athlete][0].strava_activity.athlete.lastname,
+          totalTime: _.sumBy(groupped[athlete], 'strava_activity.moving_time'),
+          club: groupped[athlete][0].club_name})
       })
 
-      jobCallback(err, {title: config.widgetTitle, html: html});
+
+      console.log(result)
+
+      //_.map(activities, function (activity) {
+      //  var enhanced = _.clone(activity)
+      //  enhanced.atleteName = activity.strava_activity.athlete.firstname + ' ' + activity.activity.strava_activity.athlete.firstname
+      //
+      //
+      //})
+
+      jobCallback(err, {title: config.widgetTitle, activities: groupped});
     });
   }
 };
